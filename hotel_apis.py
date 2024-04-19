@@ -14,6 +14,7 @@ def list_rooms(room_id=None, room_type=None):
     print("*** Room Listing ***")
     for item in r.fetch(room_id=None, room_type=None):
         print(item)
+
 def list_room_types():
     return ri.get_cursor.execute("select room_type from Rooms group by room_type;").fetchall()
 
@@ -50,7 +51,8 @@ def list_rooms_in_inventory(room_number=None,floor=None, room_type=None):
     # Returned data is all the same row format
     if room_number == None and floor == None and room_type == None:
         sql_all = """
-            select ri.floor,ri.room_number,r.room_description,r.room_type,r.room_rate from Room_inventory ri JOIN Rooms r on ri.room_id = r.id;
+            select ri.floor,ri.room_number,r.room_description,r.room_type,r.room_rate, case ri.available when 0 then 'Available' else 'Not Available' end Available
+             from Room_inventory ri JOIN Rooms r on ri.room_id = r.id;
             """
         # Should we preformat the list or just deliver raw data...?
         return ri.get_cursor.execute(sql_all).fetchall()
@@ -76,14 +78,12 @@ def list_rooms_in_inventory(room_number=None,floor=None, room_type=None):
 ## Booking routines
 ######################################################################################
 
-def book_room(floor,room_number,start_date,end_date):
+def book_room(room_number,start_date,end_date):
     # just insert the room - the ui has hopefully handled the selection and avialability
     # UI is passing strings, make sure they are the correct types
     # UI is collecting and grabbing the list and formatted the dates (maybe)
-    if floor != None:
-        floor = int(floor)
 
-    bk.add(floor,room_number,start_date,end_date)
+    bk.add(room_number,start_date,end_date)
 
 # Availability basic logic:
     # The kicker is that the date selection is the toughest part and needs to be part of a left join
@@ -108,7 +108,7 @@ def list_available_rooms_by_floor(floor,start_date,end_date):
         OR start_date between date(?) and date(?) or end_date between date(?) and date(?))
         select ri.floor,ri.room_number,r.room_description,r.room_type,r.room_rate from Room_inventory ri 
         JOIN Rooms r on ri.room_id = r.id LEFT JOIN Unavailable bk on ri.room_number = bk.room_number where ri.floor = ?
-         and bk.room_number is NULL ORDER BY ri.floor, ri.room_number;
+         and bk.room_number is NULL and ri.available = 0 ORDER BY ri.floor, ri.room_number;
     """
     # Run it
     result = bk.get_cursor.execute(sql,(start_date,end_date,start_date,end_date,start_date,end_date,floor)).fetchall()
@@ -158,7 +158,7 @@ def list_available_rooms_by_type(room_type,start_date,end_date):
         OR start_date between date(?) and date(?) or end_date between date(?) and date(?))
         select ri.floor,ri.room_number,r.room_description,r.room_type,r.room_rate from Room_inventory ri 
         JOIN Rooms r on ri.room_id = r.id LEFT JOIN Unavailable bk on ri.room_number = bk.room_number where r.room_type = ?
-         and bk.room_number is NULL ORDER BY ri.floor, ri.room_number;
+         and bk.room_number is NULL and ri.available = 0 ORDER BY ri.floor, ri.room_number;
     """
     # Run it
     result = bk.get_cursor.execute(sql,(start_date, end_date, start_date, end_date, start_date, end_date, room_type)).fetchall()
@@ -183,7 +183,7 @@ def list_available_rooms_by_price_range(low_price,high_price,start_date,end_date
         select ri.floor,ri.room_number,r.room_description,r.room_type,r.room_rate from Room_inventory ri 
         JOIN Rooms r on ri.room_id = r.id LEFT JOIN Unavailable bk on ri.room_number = bk.room_number 
         where r.room_rate BETWEEN ? and ? 
-         and bk.room_number is NULL ORDER BY ri.floor, ri.room_number;
+         and bk.room_number is NULL and ri.available = 0 ORDER BY ri.floor, ri.room_number;
     """
     # Run it
     result = bk.get_cursor.execute(sql, (start_date, end_date, start_date, end_date, start_date, end_date, low_price,high_price)).fetchall()

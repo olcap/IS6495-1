@@ -7,11 +7,11 @@ class Bookings(db.DBbase):
 
 # Dropped the status flag - not sure that it was needed
 
-    def add(self,  floor, room_number, start_date, end_date):
+    def add(self, room_number, start_date, end_date):
             #Remember that the dates are Python dates !
         try:
-            sql = "INSERT INTO Bookings (floor,room_number,start_date, end_date) VALUES (?, ?, ?, ?);"
-            super().get_cursor.execute(sql, (floor, room_number, start_date, end_date))
+            sql = "INSERT INTO Bookings (room_number,start_date, end_date) VALUES (?, ?, ?);"
+            super().get_cursor.execute(sql, (room_number, start_date, end_date))
             super().get_connection.commit()
             print("Booking added successfully")
             return True
@@ -63,7 +63,6 @@ class Bookings(db.DBbase):
 
                 CREATE TABLE Bookings(
                     id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                    floor INTEGER,
                     room_number TEXT,
 	                start_date DATE,
                     end_date DATE

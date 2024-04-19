@@ -1,5 +1,5 @@
 from hotel_apis import *
-
+from export_import import *
 
 def validate(date_text):
     try:
@@ -66,18 +66,16 @@ def list_inventory(room_number=None, floor=None, room_type=None):
     #return list_rooms_in_inventory(room_number, floor, room_type)
 
     room_list = list_rooms_in_inventory(room_number, floor, room_type) # Returns an array of tuples
-    print("Floor Room # Desc   Type   Price")
-    t_len = len(room_list)
-    if(t_len>1):
+    print("Floor Room # Desc        Type       Price")
+    # So, the select returns a single item as a tuple but multiples as a list of tuples
+    # so I needed to detect type in order to output correctly and avoid errors
+    if isinstance(room_list,list):
         for roomitem in room_list:
-            print(len(roomitem))
+            print(roomitem)
     else:
         print(room_list)
 
-    print(room_list)
-
     input("Press enter to continue")
-
 
 def add_to_inventory():
     floor = 0
@@ -101,14 +99,14 @@ def add_to_inventory():
         room_status = 0 # all new rooms are available by default
         add_room_to_inventory(room_type,floor,room_number,room_status)
 
-def update_room_in_inventory():
+def update_inventory():
     list_inventory()
-    room_number = input("Enter a room number: ")
+    room_number = input("Re-enter the room number to confirm: ")
     room_availability = input("Enter a value for availability: 1=available, 2= unavailable: ")
     update_room_in_inventory(room_number,room_availability)
 
 
-def delete_room_in_inventory():
+def delete_inventory():
     # Basically the same as an update:  Would we really delete a room?  I think only during setup if something is mis-keyed
     #basically call the CRUD routine
     room_list = list_rooms_in_inventory() # Returns an array of tuples
@@ -190,7 +188,7 @@ def book_room_by_floor():
     room = input("To book the room, enter the room number and press enter.  Type 'Cancel' to cancel this booking: ")
 
     if room != "Cancel":  # Should case-insensitive to be safe...
-        book_room(floor,room,start_date,end_date)
+        book_room(room,start_date,end_date)
 
 
 def book_room_by_type():
@@ -225,7 +223,6 @@ def book_room_by_type():
     # a better way would be to load this in a dictionary and let them select the listed item by sequence
     # Instead we need to ask for the floor number to book it
 
-    floor = input("Enter the floor number listed with the room: ")
     room = input("To book the room, enter the room number and press enter.  Type 'Cancel' to cancel this booking: ")
 
     # More Date insanity
@@ -236,7 +233,7 @@ def book_room_by_type():
     end_date = datetime.strftime(e_date,'%Y-%m-%d')
 
     if room != "Cancel":  # Should case-insensitive to be safe...TODO:
-        book_room(floor, room, start_date, end_date)
+        book_room(room, start_date, end_date)
 
 def book_room_by_price():
     ### So this gets rather gnarly.  We want to be able to check availability generally by dates but also to select
@@ -268,7 +265,6 @@ def book_room_by_price():
     # that way we could just load the data from the dictionary item
     # Instead we need to ask for the floor number to book it
 
-    floor = input("Enter the floor number listed with the room: ")
     room = input("To book the room, enter the room number and press enter.  Type 'Cancel' to cancel this booking")
 
     # More Date insanity
@@ -279,7 +275,8 @@ def book_room_by_price():
     end_date = datetime.strftime(e_date,'%Y-%m-%d')
 
     if room != "Cancel":  # Should case-insensitive to be safe...TODO:
-        book_room(floor, room, start_date, end_date)
+        book_room(room, start_date, end_date)
+
 def list_all_booked_rooms():
     # Rather than the reverse polish method we'll just see what records are book which is exactly what our CTE did
 
@@ -299,3 +296,86 @@ def list_all_booked_rooms():
 
     for room in rooms:
         print(room)
+
+##################################################################
+## Utilities methods
+##################################################################
+
+def ui_export_room_data():
+
+    print("Export room data")
+    file_name = input("Enter a file name to export to: ")
+    res = input(f"Press enter to export to {file_name} or type 'quit' to exit: " ).lower()
+    if res != 'quit':
+        eximroom = Exim_rooms("hotel_DB.sqlite")
+        eximroom.export_room_data(file_name)
+
+def ui_import_room_data():
+    print("Import room data")
+    file_name = input("Enter a file name to import from: ")
+    res = input(f"Press enter to import from {file_name} or type 'quit' to exit: " ).lower()
+    if res != 'quit':
+        eximroom = Exim_rooms("hotel_DB.sqlite")
+        eximroom.import_room_data(file_name)
+
+def ui_reset_room_data():
+    print("Reset room table")
+    response =  input("This cannot be undone. Press enter 'y' to continue: ").lower()
+    if response == 'y':
+        rm.Rooms().reset_database()  # There will be another chance to bail in the api
+
+####
+# Room Inventory
+####
+
+def ui_export_room_inventory_data():
+    print("Export room inventory data")
+    file_name = input("Enter a file name to export to: ")
+    res = input(f"Press enter to export to {file_name} or type 'quit' to exit: ").lower()
+    if res != 'quit':
+        eximroom_inv = Exim_rooms_inventory("hotel_DB.sqlite")
+        eximroom_inv.export_room_inventory_data(file_name)
+
+
+def ui_import_room_inventory_data():
+    print("Import room inventory data")
+    file_name = input("Enter a file name to import from: ")
+    res = input(f"Press enter to import from {file_name} or type 'quit' to exit: ").lower()
+    if res != 'quit':
+        eximroom_inv = Exim_rooms_inventory("hotel_DB.sqlite")
+        eximroom_inv.import_room_inventory_data(file_name)
+
+
+def ui_reset_room_inventory_data():
+    print("Reset room inventory table")
+    response =  input("This cannot be undone. Press enter 'y' to continue: ").lower()
+    if response == 'y':
+        ri.RoomInventory().reset_database()
+
+####
+# Bookings
+####
+
+def ui_export_booking_data():
+    print("Export booking data")
+    file_name = input("Enter a file name to export to: ")
+    res = input(f"Press enter to export to {file_name} or type 'quit' to exit: ").lower()
+    if res != 'quit':
+        eximbookings = Exim_bookings("hotel_DB.sqlite")
+        eximbookings.export_booking_data(file_name)
+
+
+def ui_import_booking_data():
+    print("Import booking data")
+    file_name = input("Enter a file name to import from: ")
+    res = input(f"Press enter to import from {file_name} or type 'quit' to exit: ").lower()
+    if res != 'quit':
+        eximbookings = Exim_bookings("hotel_DB.sqlite")
+        eximbookings.import_booking_data(file_name)
+
+
+def ui_reset_booking_data():
+    print("Reset bookings table")
+    response = input("This cannot be undone. Press enter 'y' to continue: ").lower()
+    if response == 'y':
+        bk.Bookings().reset_database()  # There will be another chance to bail in the api
