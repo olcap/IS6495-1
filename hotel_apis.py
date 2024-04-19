@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import date
 
 import rooms as rooms
 import room_inventory as room_inv

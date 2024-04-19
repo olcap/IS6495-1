@@ -10,6 +10,29 @@ def validate(date_text):
         print("Incorrect date or format.")
         return False
 
+def validate_check_in(check_in):
+    try:
+        check_in_date = datetime.strptime(check_in, "%m-%d-%Y").date()
+        today = date.today()
+        if check_in_date < today :
+            raise ValueError
+        return True
+    except ValueError as ve:
+        print("Check-in Date cannot be before today.")
+        return False
+    
+def validate_check_out(check_in,check_out):
+    try:
+        check_in_date = datetime.strptime(check_in, "%m-%d-%Y")
+        check_out_date = datetime.strptime(check_out, "%m-%d-%Y")
+
+        if check_in_date > check_out_date:
+            raise ValueError
+        return True
+    except ValueError as ve:
+        print("The check-out date should be greater than the check-in date.")
+        return False
+
 ##  Room routines
 def update_rooms():
     #basically call the CRUD routine
@@ -183,14 +206,14 @@ def book_room_by_floor():
     floor = input("Enter the floor you would like to check availability for: ")
     # Loop until start date is correct
     # Pressing enter grabs today's date
-    start_date = input("Enter the start date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
-    while validate(start_date) == False:
-        start_date = input("Enter the start date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
+    start_date = input("Enter the check-in date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
+    while validate(start_date) == False or validate_check_in(start_date) == False:
+        start_date = input("Enter the check-in date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
     # Loop until end date is correct
     # Pressing enter grabs today's date
-    end_date = input("Enter the end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
-    while validate(end_date) == False:
-        end_date = input("Enter the end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
+    end_date = input("Enter the check-out date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
+    while validate(end_date) == False or validate_check_out(start_date,end_date):
+        end_date = input("Enter the check-out date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
 
     print("**** Checking availability ****")
     rooms = list_available_rooms_by_floor(floor, start_date, end_date )
@@ -227,12 +250,12 @@ def book_room_by_type():
     # Loop until start date is correct
     # Pressing enter grabs today's date
     start_date = input("Enter the start date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
-    while validate(start_date) == False:
+    while validate(start_date) == False or validate_check_in(start_date) == False:
         start_date = input("Enter the start date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
     # Loop until end date is correct
     # Pressing enter grabs today's date
     end_date = input("Enter the end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
-    while validate(end_date) == False:
+    while validate(end_date) == False or validate_check_out(start_date, end_date):
         end_date = input("Enter the end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
 
     print("**** Checking availability ****")
@@ -267,12 +290,12 @@ def book_room_by_price():
     # Loop until start date is correct
     # Pressing enter grabs today's date
     start_date = input("Enter the start date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
-    while validate(start_date) == False:
+    while validate(end_date) == False or validate_check_in(start_date):
         start_date = input("Enter the start date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
     # Loop until end date is correct
     # Pressing enter grabs today's date
     end_date = input("Enter the end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
-    while validate(end_date) == False:
+    while validate(end_date) == False or validate_check_out(start_date, end_date):
         end_date = input("Enter the end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
 
     print("**** Checking availability ****")
