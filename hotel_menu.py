@@ -90,9 +90,9 @@ def booking_menu():
         if user_selection == "1":
             book_one_room()
         elif user_selection == "2":
-            update_booking()
+            ui_update_booking()
         elif user_selection == "3":
-            cancel_booking()
+            ui_cancel_booking()
         elif user_selection == "4":
             list_all_booked_rooms()
         elif user_selection == "9":

@@ -25,6 +25,7 @@ def update_rooms():
     r.update(_id,room_type,room_desc,room_price)
     list_rooms()
     input("Press enter to continue")
+
 def delete_rooms():
     #basically call the CRUD routine
     list_rooms()
@@ -123,9 +124,28 @@ def delete_inventory():
         print("Room",room_number,"deleted.")
     input("Press enter to continue")
 
-
+####################################################################################
 ## Booking routines
 ######################################################################################
+def ui_update_booking():
+    # probably need a search of bookings by date range (display the list) -- list_all_booked_rooms()
+    # Make sure the list includes the booking_id (I haven't been including the id's on a routine basis in my lists)
+    # Display the list, have the user select the booking to change which may include:
+    #  New date range (let them select the range and then list the avialble rooms in inventory)
+    #  Room change (just change the room to one that is listed in the serach)
+    #  With dates selected or not and room selected or not
+    # Call the api update_booking() pass what has changed
+    pass
+
+def ui_cancel_booking():
+    # Similar to update
+    # probably need a search of bookings by date range (display the list) --list_all_booked_rooms()
+    # Make sure the list includes the booking_id (I haven't been including the id's on a routine basis in my lists)
+    # Display the list, have the user select the booking to cancel.
+    # Call the API to cancel the booking cancel_booking()
+
+    pass
+
 def book_one_room():
     # Need to choose what kind of booking by date, by floor, by type, by price
     menu_options = {"1": "Book a room by floor",
