@@ -152,22 +152,36 @@ def delete_inventory():
 ######################################################################################
 def ui_update_booking():
     # probably need a search of bookings by date range (display the list) -- list_all_booked_rooms()
+    list_all_booked_rooms()
     # Make sure the list includes the booking_id (I haven't been including the id's on a routine basis in my lists)
+    booking_id = input("Enter the Booking Id you would like to change: ")
     # Display the list, have the user select the booking to change which may include:
     #  New date range (let them select the range and then list the avialble rooms in inventory)
     #  Room change (just change the room to one that is listed in the serach)
     #  With dates selected or not and room selected or not
-    # Call the api update_booking() pass what has changed
-    pass
+    selection = input("Select an option.\n 1 - Change date range. \n 2 - Room change.\n")
+    if selection == "1":
+        start_date = input("Enter the new start date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
+        while validate(start_date) == False:
+            start_date = input("Enter the new start date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
+        end_date = input("Enter the new end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
+        while validate(end_date) == False:
+            end_date = input("Enter the new end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
+        update_booking(booking_id, room_number, start_date, end_date)
+    elif selection == "2":
+        ui_cancel_booking(booking_id)
+        print("*** New Room Booking ***")
+        book_one_room()
 
-def ui_cancel_booking():
+def ui_cancel_booking(booking_id=None):
     # Similar to update
     # probably need a search of bookings by date range (display the list) --list_all_booked_rooms()
+    list_all_booked_rooms()
     # Make sure the list includes the booking_id (I haven't been including the id's on a routine basis in my lists)
     # Display the list, have the user select the booking to cancel.
+    booking_id = input("Enter the Booking Id you would like to cancel: ")
     # Call the API to cancel the booking cancel_booking()
-
-    pass
+    cancel_booking(booking_id)
 
 def book_one_room():
     # Need to choose what kind of booking by date, by floor, by type, by price

@@ -19,10 +19,10 @@ class Bookings(db.DBbase):
             print("An error occurred while adding the booking:", e)
             return False
 
-    def update(self, booking_id, room_number, start_date, end_date):
+    def update(self, booking_id, start_date, end_date):
         try:
-            sql = "UPDATE Bookings SET room_number = ?, start_date = ?, end_date = ? WHERE id = ?;"
-            super().get_cursor.execute(sql, (room_number, start_date, end_date, booking_id))
+            sql = "UPDATE Bookings SET start_date = ?, end_date = ? WHERE id = ?;"
+            super().get_cursor.execute(sql, (start_date, end_date, booking_id))
             super().get_connection.commit()
             print("Booking updated successfully")
             return True
@@ -30,10 +30,10 @@ class Bookings(db.DBbase):
             print("An error occurred while updating the booking:", e)
             return False
 
-    def delete(self, room_number):
+    def delete(self, booking_id):
         try:
-            sql = "DELETE FROM Bookings WHERE room_number = ?;"
-            super().get_cursor.execute(sql, (room_number,))
+            sql = "DELETE FROM Bookings WHERE id = ?;"
+            super().get_cursor.execute(sql, (booking_id,))
             super().get_connection.commit()
             print("Booking deleted successfully")
             return True
