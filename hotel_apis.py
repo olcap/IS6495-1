@@ -238,10 +238,10 @@ def list_booked_rooms(start_date,end_date):
     result = bk.get_cursor.execute(sql, (start_date, end_date, start_date, end_date, start_date, end_date)).fetchall()
     return result
 
-def update_booking(booking_id, room_number, start_date, end_date):
+def update_booking(booking_id, start_date, end_date):
     # basically call the CRUD routine - The booking ID is the booking dates ID
 
-    bk.update(booking_id, room_number, start_date, end_date)
+    bk.update(booking_id, start_date, end_date)
     print("Booking",booking_id,"updated.")
 
 def cancel_booking(booking_id):
