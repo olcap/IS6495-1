@@ -159,7 +159,7 @@ def ui_update_booking():
     #  New date range (let them select the range and then list the avialble rooms in inventory)
     #  Room change (just change the room to one that is listed in the serach)
     #  With dates selected or not and room selected or not
-    selection = input("Select an option.\n 1 - Change date range. \n 2 - Room change.\n")
+    selection = input("Select an option.\n 1 - Change date range. \n 2 - Room change.")
     if selection == "1":
         start_date = input("Enter the new start date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
         while validate(start_date) == False:
@@ -167,7 +167,7 @@ def ui_update_booking():
         end_date = input("Enter the new end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
         while validate(end_date) == False:
             end_date = input("Enter the new end date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
-        update_booking(booking_id, room_number, start_date, end_date)
+        update_booking(booking_id, start_date, end_date)
     elif selection == "2":
         ui_cancel_booking(booking_id)
         print("*** New Room Booking ***")
