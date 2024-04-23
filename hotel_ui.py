@@ -1,5 +1,6 @@
 from hotel_apis import *
 from export_import import *
+import hotel_menu as hm
 
 def validate(date_text):
     try:
@@ -170,7 +171,6 @@ def ui_update_booking():
         update_booking(booking_id, start_date, end_date)
     elif selection == "2":
         ui_cancel_booking(booking_id)
-        print("*** New Room Booking ***")
         book_one_room()
 
 def ui_cancel_booking(booking_id=None):
@@ -187,7 +187,8 @@ def book_one_room():
     # Need to choose what kind of booking by date, by floor, by type, by price
     menu_options = {"1": "Book a room by floor",
                     "2": "Book a room by price",
-                    "3": "Book a room by room type"
+                    "3": "Book a room by room type",
+                    "9": "Back to main menu"
                     }
     user_selection = "X"
     while user_selection != "":
@@ -202,6 +203,8 @@ def book_one_room():
             book_room_by_price()
         elif user_selection == "3":
             book_room_by_type()
+        elif user_selection == "9":
+            hm.booking_menu()
 
 def book_room_by_floor():
     # This will be a little more involved.  We should probably ask about a floor request first or *any*.
@@ -226,7 +229,7 @@ def book_room_by_floor():
     # Loop until end date is correct
     # Pressing enter grabs today's date
     end_date = input("Enter the check-out date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
-    while validate(end_date) == False or validate_check_out(start_date,end_date):
+    while validate(end_date) == False or validate_check_out(start_date,end_date) == False:
         end_date = input("Enter the check-out date in MM-DD-YYYY format: ") or datetime.today().strftime("%m-%d-%Y")
 
     print("**** Checking availability ****")
